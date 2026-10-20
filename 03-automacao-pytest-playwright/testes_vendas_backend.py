@@ -1,9 +1,9 @@
 """
-Suíte de Testes Automatizados de Componente e Integridade (Backend / PostgreSQL)
+Suíte de Testes Automatizados de Componente, Integridade e Cobertura (Backend / PostgreSQL)
 Projeto: StockFlow
-Framework: Pytest
-Objetivo: Cobertura total das regras de negócio, integridade transacional SQL, RBAC, Caixa e Auditoria.
-Conformidade ISTQB CTFL v4.0: Teste de Componente / Teste Caixa-Branca (Capítulos 2 e 4)
+Framework: Pytest & Pytest-Cov
+Objetivo: Validar regras de negócio e elevar a cobertura de código (Statement Coverage) no backend.
+Conformidade ISTQB CTFL v4.0: Teste Caixa-Branca / Cobertura de Instrução (Capítulo 4.3)
 """
 
 import sys
@@ -16,6 +16,8 @@ import pytest
 from werkzeug.security import check_password_hash
 from database.connection import conectar
 from database.vendas import finalizar_venda_multi_item
+from database.caixa import obter_caixa_atual
+from database.produtos import listar_produtos, obter_metricas_estoque
 
 
 @pytest.fixture
@@ -105,7 +107,7 @@ def test_validar_distincao_cargos_rbac(conexao_db):
 
 
 # ==============================================================================
-# MÓDULO 4: PRODUTOS E REGRAS DE ESTOQUE (database/produtos.py)
+# MÓDULO 4: REGRAS DE PRODUTOS E ESTOQUE (database/produtos.py)
 # ==============================================================================
 
 def test_verificar_alerta_estoque_critico(conexao_db):
@@ -130,7 +132,7 @@ def test_validar_integridade_valores_produtos(conexao_db):
 
 
 # ==============================================================================
-# MÓDULO 5: CAIXA E SESSÃO TURNO (database/caixa.py)
+# MÓDULO 5: CAIXA E AUDITORIA
 # ==============================================================================
 
 def test_verificar_existencia_registro_caixa(conexao_db):
@@ -146,15 +148,12 @@ def test_verificar_existencia_registro_caixa(conexao_db):
 def test_validar_status_caixa_invalido(conexao_db):
     """CT-BACK-009: Garantir que a tabela de caixa não aceite status inconsistentes."""
     cursor = conexao_db.cursor()
-    # Usa LOWER() para comparar de forma insensível a maiúsculas/minúsculas
     cursor.execute("SELECT COUNT(*) FROM caixa WHERE LOWER(status) NOT IN ('aberto', 'fechado');")
     status_invalidos = cursor.fetchone()[0]
     cursor.close()
     
     assert status_invalidos == 0, "Existem registros de caixa com status inconsistente no banco!"
-# ==============================================================================
-# MÓDULO 6: AUDITORIA E LOGS DE SISTEMA (database/auditoria.py)
-# ==============================================================================
+
 
 def test_validar_presenca_logs_auditoria(conexao_db):
     """CT-BACK-010: Validar a capacidade do PostgreSQL de registrar logs de auditoria."""
@@ -164,3 +163,31 @@ def test_validar_presenca_logs_auditoria(conexao_db):
     cursor.close()
     
     assert total_logs >= 0, "A tabela de logs de auditoria não está acessível no banco PostgreSQL."
+
+
+# ==============================================================================
+# MÓDULO 6: TESTES DIRETOS DE FUNÇÕES PYTHON (Elevação da Cobertura de Código)
+# ==============================================================================
+
+def test_execucao_funcao_obter_caixa_atual():
+    """CT-BACK-011: Chamada direta da função Python obter_caixa_atual() do arquivo database/caixa.py."""
+    caixa = obter_caixa_atual()
+    if caixa is not None:
+        assert isinstance(caixa, tuple), "O caixa retornado deveria ser uma tupla com os dados do banco."
+    else:
+        assert caixa is None, "A função deveria retornar None se nenhum caixa estiver aberto."
+
+
+def test_execucao_funcao_listar_produtos():
+    """CT-BACK-012: Chamada direta da função Python listar_produtos() do arquivo database/produtos.py."""
+    produtos = listar_produtos()
+    assert isinstance(produtos, list), "A função listar_produtos não retornou uma lista."
+    assert len(produtos) > 0, "A listagem de produtos retornou vazia (esperava-se os produtos do seed.py)."
+
+
+def test_execucao_funcao_obter_metricas_estoque():
+    """CT-BACK-013: Chamada direta da função Python obter_metricas_estoque() do arquivo database/produtos.py."""
+    metricas = obter_metricas_estoque()
+    assert isinstance(metricas, dict), "A função obter_metricas_estoque não retornou um dicionário."
+    assert "total_itens" in metricas, "A chave 'total_itens' não foi encontrada nas métricas do estoque."
+    assert metricas["total_itens"] > 0, "O total de itens nas métricas deve ser maior que zero."
