@@ -1,0 +1,148 @@
+{
+	"info": {
+		"_postman_id": "abb661c0-9ad9-4ce2-91a2-08d7e5c580d3",
+		"name": "StockFlow - API REST Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "59377678",
+		"_collection_link": "https://igoorpy-7935798.postman.co/workspace/Igor's-Workspace~f6d542b8-e556-439e-8973-1368d640fd61/collection/59377678-abb661c0-9ad9-4ce2-91a2-08d7e5c580d3?action=share&source=collection_link&creator=59377678"
+	},
+	"item": [
+		{
+			"name": "CT-API-001 - Autenticação Vendedor (Sucesso)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Asserção 1: Validar se o servidor respondeu com Status Code 200 OK (Sucesso)",
+							"pm.test(\"CT-API-001 - Status code é 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Asserção 2: Validar a performance da API (tempo de resposta aceitável abaixo de 500ms)",
+							"pm.test(\"CT-API-001 - Tempo de resposta inferior a 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"// Asserção 3: Validar a estrutura e os valores no JSON de resposta",
+							"pm.test(\"CT-API-001 - Retorno JSON contém dados válidos do vendedor\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.sucesso).to.eql(true);",
+							"    pm.expect(jsonData.usuario).to.eql(\"carlos.vendedor\");",
+							"    pm.expect(jsonData.cargo).to.eql(\"vendedor\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"usuario\": \"carlos.vendedor\",\n  \"senha\": \"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CT-API-002 - Autenticação Vendedor (Credenciais Inválidas)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Asserção 1: Validar se a API nega o acesso com Status Code 401 Unauthorized",
+							"pm.test(\"CT-API-002 - Status code é 401 Unauthorized\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"// Asserção 2: Validar se o tempo de resposta permanece dentro do limite (< 500ms)",
+							"pm.test(\"CT-API-002 - Tempo de resposta inferior a 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"// Asserção 3: Validar a mensagem de erro no corpo do JSON",
+							"pm.test(\"CT-API-002 - Retorno JSON confirma falha de autenticação\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.sucesso).to.eql(false);",
+							"    pm.expect(jsonData.mensagem).to.eql(\"Usuário ou senha incorretos.\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"usuario\": \"carlos.vendedor\",\n  \"senha\": \"senha_errada_123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
