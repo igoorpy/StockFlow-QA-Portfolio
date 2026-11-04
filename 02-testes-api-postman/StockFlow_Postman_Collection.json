@@ -143,6 +143,246 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "CT-API-001B - Autenticação Admin (Sucesso)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Asserção 1: Validar se o servidor respondeu com Status Code 200 OK",
+							"pm.test(\"CT-API-001B - Status code é 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Asserção 2: Validar performance (tempo de resposta inferior a 500ms)",
+							"pm.test(\"CT-API-001B - Tempo de resposta inferior a 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"// Asserção 3: Validar se a resposta em JSON confirma o cargo de administrador",
+							"pm.test(\"CT-API-001B - Retorno JSON contém dados válidos do administrador\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.sucesso).to.eql(true);",
+							"    pm.expect(jsonData.usuario).to.eql(\"admin\");",
+							"    pm.expect(jsonData.cargo).to.eql(\"admin\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"usuario\": \"admin\",\n  \"senha\": \"admin123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CT-API-003 - Listagem do Catálogo (GET /produtos)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Asserção 1: Validar Status Code 200 OK",
+							"pm.test(\"CT-API-003 - Status code é 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Asserção 2: Validar tempo de resposta (< 500ms)",
+							"pm.test(\"CT-API-003 - Tempo de resposta inferior a 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"// Asserção 3: Validar se a resposta é uma lista (Array JSON) contendo produtos",
+							"pm.test(\"CT-API-003 - Retorno contém um array JSON de produtos\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"    pm.expect(jsonData.length).to.be.above(0);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"usuario\": \"carlos.vendedor\",\n  \"senha\": \"senha_errada_123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/produtos",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"produtos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CT-API-004 - Processamento de Venda (Sucesso)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Asserção 1: Validar Status Code 200 OK",
+							"pm.test(\"CT-API-004 - Status code é 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Asserção 2: Validar tempo de resposta (< 500ms)",
+							"pm.test(\"CT-API-004 - Tempo de resposta inferior a 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"// Asserção 3: Validar confirmação de venda no JSON",
+							"pm.test(\"CT-API-004 - Retorno JSON confirma processamento da venda\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.sucesso).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"carrinho\": [\n    {\n      \"produto_id\": 1,\n      \"quantidade\": 2,\n      \"subtotal\": 30.00\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/vendas",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"vendas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CT-API-005 - Consulta de Logs de Auditoria (Admin)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Asserção 1: Validar Status Code 200 OK para perfil Admin",
+							"pm.test(\"CT-API-005 - Status code é 200 OK para perfil Admin\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Asserção 2: Validar tempo de resposta (< 500ms)",
+							"pm.test(\"CT-API-005 - Tempo de resposta inferior a 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"// Asserção 3: Validar se o retorno é um Array JSON de logs",
+							"pm.test(\"CT-API-005 - Retorno contém lista JSON de logs de auditoria\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{base_url}}/auditoria",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auditoria"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
