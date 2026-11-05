@@ -58,3 +58,20 @@ database/vendas.py          71     45    37%   13, 17, 33-34, 38-68, 79-108, 112
 ------------------------------------------------------
 TOTAL                      462    385    17%
 ======================================== 13 passed in 0.85s =========================================
+
+# Automação de Testes de Backend & Web E2E (Pytest + Selenium WebDriver)
+
+Esta pasta contém as suítes de automação de testes do **StockFlow**, cobrindo validações de regras de negócio no backend (cobertura de código/instrução) e fluxos de navegação ponta a ponta (**End-to-End - E2E**) na interface Web com Selenium WebDriver e Page Object Model (POM).
+
+## Arquitetura do Projeto de Automação
+
+```text
+03-automacao-pytest-playwright/
+├── conftest.py          # Fixtures do Pytest e gerenciamento do Selenium WebDriver (Brave/Chromium)
+├── pytest.ini           # Configurações globais de execução e geração de relatórios HTML
+├── pages/               # Camada Page Object Model (POM)
+│   ├── base_page.py     # Métodos genéricos com esperas explícitas (Explicit Waits)
+│   └── login_page.py    # Mapeamento de elementos e ações da tela de Login
+└── tests/               # Suítes de Testes Automatizados
+    ├── testes_vendas_backend.py  # Testes de unidade/componente e cobertura
+    └── test_login.py            # Testes E2E de interface gráfica (Login Vendedor e Admin)
