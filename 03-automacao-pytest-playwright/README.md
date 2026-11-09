@@ -61,7 +61,9 @@ TOTAL                      462    385    17%
 
 # Automação de Testes de Backend & Web E2E (Pytest + Selenium WebDriver)
 
-Esta pasta contém as suítes de automação de testes do **StockFlow**, cobrindo validações de regras de negócio no backend (cobertura de código/instrução) e fluxos de navegação ponta a ponta (**End-to-End - E2E**) na interface Web com Selenium WebDriver e Page Object Model (POM).
+Esta pasta contém as suítes de automação de testes do **StockFlow**, cobrindo validações de regras de negócio no backend (cobertura de código/instrução) e fluxos de navegação ponta a ponta (**End-to-End - E2E**) na interface Web com Selenium WebDriver e o padrão Page Object Model (POM).
+
+---
 
 ## Arquitetura do Projeto de Automação
 
@@ -71,7 +73,9 @@ Esta pasta contém as suítes de automação de testes do **StockFlow**, cobrind
 ├── pytest.ini           # Configurações globais de execução e geração de relatórios HTML
 ├── pages/               # Camada Page Object Model (POM)
 │   ├── base_page.py     # Métodos genéricos com esperas explícitas (Explicit Waits)
-│   └── login_page.py    # Mapeamento de elementos e ações da tela de Login
+│   ├── login_page.py    # Mapeamento e ações da tela de Login
+│   └── pdv_page.py      # Mapeamento e ações da tela de Ponto de Venda (PDV)
 └── tests/               # Suítes de Testes Automatizados
-    ├── testes_vendas_backend.py  # Testes de unidade/componente e cobertura
-    └── test_login.py            # Testes E2E de interface gráfica (Login Vendedor e Admin)
+    ├── testes_vendas_backend.py  # 13 Casos de Teste de Backend e Cobertura (Pytest-Cov)
+    ├── test_login.py            # 3 Casos de Teste E2E da Tela de Login
+    └── test_vendas_e2e.py       # 1 Caso de Teste E2E de Processamento de Venda no PDV
