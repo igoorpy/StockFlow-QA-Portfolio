@@ -74,8 +74,10 @@ Esta pasta contém as suítes de automação de testes do **StockFlow**, cobrind
 ├── pages/               # Camada Page Object Model (POM)
 │   ├── base_page.py     # Métodos genéricos com esperas explícitas (Explicit Waits)
 │   ├── login_page.py    # Mapeamento e ações da tela de Login
-│   └── pdv_page.py      # Mapeamento e ações da tela de Ponto de Venda (PDV)
+│   ├── pdv_page.py      # Mapeamento e ações da tela de Ponto de Venda (PDV)
+│   └── produtos_page.py # Mapeamento e ações da tela de Produtos/Estoque
 └── tests/               # Suítes de Testes Automatizados
     ├── testes_vendas_backend.py  # 13 Casos de Teste de Backend e Cobertura (Pytest-Cov)
     ├── test_login.py            # 3 Casos de Teste E2E da Tela de Login
-    └── test_vendas_e2e.py       # 1 Caso de Teste E2E de Processamento de Venda no PDV
+    ├── test_vendas_e2e.py       # 1 Caso de Teste E2E de Processamento de Venda no PDV
+    └── test_produtos_e2e.py     # 1 Caso de Teste E2E de Listagem de Estoque
