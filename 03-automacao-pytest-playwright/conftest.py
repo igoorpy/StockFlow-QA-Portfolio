@@ -7,7 +7,7 @@ from selenium.webdriver.chrome.service import Service
 def driver():
     options = webdriver.ChromeOptions()
     options.add_argument("--start-maximized")
-    options.add_argument("--headless")  # Execução em segundo plano
+    # options.add_argument("--headless")  # Execução em segundo plano
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
 
